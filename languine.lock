@@ -435,6 +435,13 @@ files:
     storefront.store.checkout.success.title: 6fd1e8e08563b1a2395badaed519db86
     storefront.store.checkout.success.message: 63c505e8a46d82a5b30ef376401f40e7
     storefront.store.checkout.success.continueShopping: c20905e8fdd34a1bf81984e597436134
+    storefront.storeSelector.heading: a4838f49c5701e128d7695c3dc45083c
+    storefront.storeSelector.description: d72cb364341ab1c5fc3c02ccf63bbd97
+    storefront.storeSelector.placeholder: ce1b54d2bbf9b880ca9e0eec38e746ab
+    storefront.storeSelector.button: 0bba1dc9f0f124b0a4c3a1de5b9d96b2
+    storefront.storeSelector.loading: 8524de963f07201e5c086830d370797f
+    storefront.storeSelector.errorNotFound: e8225f4e058e8a33ea91106955767dd3
+    storefront.storeSelector.errorReserved: 09000e2acd6db2c96cf1ef9ed7f80c7f
     storefront.comingSoon.heading: bc14b01ef9721608391a4d58565a5fdb
     storefront.comingSoon.description.line1: 1d881afbdd3af521120718b3def84876
     storefront.comingSoon.description.line2: 7b213864800e2f12bb32bbf44e65d96f
