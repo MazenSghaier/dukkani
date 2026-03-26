@@ -32,6 +32,7 @@ import {
 } from "react";
 import { useCategoriesQuery } from "@/hooks/api/use-categories";
 import { useProductsController } from "@/hooks/controllers/use-products-controller";
+import { compressImagesForUpload } from "@/lib/compress-images";
 import { handleAPIError } from "@/lib/error";
 import { client } from "@/lib/orpc";
 import { RoutePaths } from "@/lib/routes";
@@ -66,18 +67,27 @@ export const ProductForm = forwardRef<ProductFormHandle, { storeId: string }>(
         variantOptions: [],
       } as ProductFormInput,
       onSubmit: async ({ value }) => {
-        let imageUrls: string[] = [];
-        if (value.imageFiles.length > 0) {
+        const imageUrls = await (async () => {
+          if (value.imageFiles.length === 0) {
+            return [];
+          }
+
           try {
             const res = await client.product.uploadImages({
               storeId,
               files: value.imageFiles,
             });
-            imageUrls = res.files.map((file) => file.url);
+            return res.files.map((file) => file.url);
           } catch (error) {
             handleAPIError(error);
+            return null;
           }
+        })();
+
+        if (imageUrls === null) {
+          return;
         }
+
         const cleanedFormData = productFormSchema.parse(value);
         const cleanedData = {
           ...cleanedFormData,
@@ -125,11 +135,7 @@ export const ProductForm = forwardRef<ProductFormHandle, { storeId: string }>(
 
     const handleCategoryCreated = useCallback(
       (categoryId: string) => {
-        const timeoutId = setTimeout(() => {
-          form.setFieldValue("categoryId", categoryId);
-        }, 1000);
-
-        return () => clearTimeout(timeoutId);
+        form.setFieldValue("categoryId", categoryId);
       },
       [form],
     );
@@ -204,7 +210,10 @@ export const ProductForm = forwardRef<ProductFormHandle, { storeId: string }>(
                   </form.AppField>
                   <form.AppField name="imageFiles" mode="array">
                     {(imageUrlsField) => (
-                      <imageUrlsField.ImagesInput label={t("form.photos")} />
+                      <imageUrlsField.ImagesInput
+                        label={t("form.photos")}
+                        optimizeFiles={compressImagesForUpload}
+                      />
                     )}
                   </form.AppField>
                   <form.AppField
