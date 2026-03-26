@@ -30,7 +30,6 @@ import {
 	useMemo,
 	useState,
 } from "react";
-import { toast } from "sonner";
 import { useCategoriesQuery } from "@/hooks/api/use-categories";
 import { useProductsController } from "@/hooks/controllers/use-products-controller";
 import { compressImagesForUpload } from "@/lib/compress-images";
@@ -70,46 +69,14 @@ export const ProductForm = forwardRef<ProductFormHandle, { storeId: string }>(
 			onSubmit: async ({ value }) => {
 				let imageUrls: string[] = [];
 				if (value.imageFiles.length > 0) {
-					const prepareToastId = "product-images-prepare";
 					try {
-						toast.loading(
-							value.imageFiles.length === 1
-								? "Preparing image…"
-								: `Preparing images (0/${value.imageFiles.length})…`,
-							{ id: prepareToastId },
-						);
-						const prepared = await compressImagesForUpload(
-							value.imageFiles,
-							({ index, total }) => {
-								if (total > 1) {
-									toast.loading(`Preparing images (${index}/${total})…`, {
-										id: prepareToastId,
-									});
-								}
-							},
-						);
-						toast.dismiss(prepareToastId);
-						if (prepared.length === 1) {
-							const [first] = prepared;
-							if (first) {
-								toast.success(first.sizeSummary, {
-									description: first.originalName,
-								});
-							}
-						} else {
-							toast.success(`${prepared.length} images prepared`, {
-								description: prepared
-									.map((r) => `${r.originalName}: ${r.sizeSummary}`)
-									.join("\n"),
-							});
-						}
+						const prepared = await compressImagesForUpload(value.imageFiles);
 						const res = await client.product.uploadImages({
 							storeId,
-							files: prepared.map((r) => r.file),
+							files: prepared,
 						});
 						imageUrls = res.files.map((file) => file.url);
 					} catch (error) {
-						toast.dismiss(prepareToastId);
 						handleAPIError(error);
 						return;
 					}
