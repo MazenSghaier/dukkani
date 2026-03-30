@@ -4,6 +4,8 @@ import {
   type ProductFormInput,
   productFormSchema,
 } from "@dukkani/common/schemas/product/form";
+
+import { ProductPhotosSection } from "./product-photos-section";
 import type { CreateProductInput } from "@dukkani/common/schemas/product/input";
 import { Button } from "@dukkani/ui/components/button";
 import { Card, CardContent, CardFooter } from "@dukkani/ui/components/card";
@@ -208,10 +210,12 @@ export const ProductForm = forwardRef<ProductFormHandle, { storeId: string }>(
                       />
                     )}
                   </form.AppField>
-                  <form.AppField name="imageFiles" mode="array">
-                    {(imageUrlsField) => (
-                      <imageUrlsField.ImagesInput
+                  <form.AppField name="imageFiles">
+                    {(field) => (
+                      <ProductPhotosSection
                         label={t("form.photos")}
+                        value={field.state.value as File[]}
+                        onChange={(files) => field.handleChange(files)}
                         optimizeFiles={compressImagesForUpload}
                       />
                     )}
